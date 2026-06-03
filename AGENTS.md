@@ -13,7 +13,7 @@
 - `make clean && make debug` builds a debug profile with symbols.
 - `make clean && make STRICT=1` enables strict warnings (`-Werror`).
 - `make run` boots the image in QEMU (`qemu-system-i386`).
-- Toolchain: prefer `i686-elf-gcc`; the Makefile falls back to native `gcc -m32` when unavailable.
+- Toolchain: prefer `i686-elf-gcc`; the Makefile fallback to native `gcc -m32` is acceptable only for early/local experiments.
 
 ## Coding Style & Naming Conventions
 - Follow `.editorconfig`: 4 spaces for `*.c`, `*.h`, `*.asm`; tabs in `Makefile`; 2 spaces in docs/YAML/JSON.
@@ -24,7 +24,9 @@
 ## Testing Guidelines
 - There is no host-side unit test framework yet; validation is boot/runtime based.
 - Minimum check for each change: build (`make` or `make debug`) and boot (`make run`).
+- Before storage/VFS work is considered healthy, follow `docs/SMOKE_TESTS.md`.
 - At KShell, run `diagnose`; for storage/VFS changes also verify `blkinfo`, `mounts`, `pyfs_sb`, and `diskread 0`.
+- For v0.9+ storage work, also verify VFS-backed `ls /dev`, `ls /py`, and `cat /py/<small-test-file>` once implemented.
 - Include exact reproduction steps and observed output when reporting regressions.
 
 ## Commit & Pull Request Guidelines
@@ -36,3 +38,9 @@
 ## Security & Repository Status
 - This repository is private and all-rights-reserved (see `NOTICE`).
 - Report security-sensitive kernel issues privately to maintainers instead of filing public issues.
+
+## Current Engineering Priorities
+- Treat `docs/TECHNICAL_REVIEW_2026-06-03.md` as the current review baseline.
+- Do not expand into GUI, networking, audio, local AI, or Baa/Takween migration before the v0.9 boot/memory/storage stabilization work is complete.
+- Any change touching boot, linker, PMM, VMM, Stage 2, or image layout must update `docs/BOOT_MEMORY_LAYOUT.md` if assumptions change.
+- Shared archives must exclude `.git/`, `.vs/`, `build/`, and generated images.

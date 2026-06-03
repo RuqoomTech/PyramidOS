@@ -1,81 +1,143 @@
 # Layer 3: Tactical Roadmap (Current Sprint)
 
-**Focus:** Foundation Hardening & Core Optimization.
-**Current Kernel:** v0.8 -> **Target:** v0.8.1 (Hardened).
+**Focus:** v0.9 stabilization — boot/memory correctness, storage/VFS reality,
+and repeatable smoke testing.
 
-> **Objective:** Resolve technical debt and improve system stability before implementing Filesystem/VFS and Userland.
+**Current Kernel:** v0.8.1 documentation/hardening baseline  
+**Target:** v0.9 — Storage + VFS Reality Check
 
----
+> **Objective:** Fix the highest-risk engineering assumptions before adding GUI,
+> networking, multitasking expansion, Baa/Takween migration, or advanced
+> Arabic-console work.
 
-## 1. 🛡️ System Debugging (The Panic System)
+See also:
 
-*Current Status: Basic red text. No register dumps. Hard to debug.*
-
-- [x] **Refactor:** Move `Registers` struct to a shared header.
-- [x] **Create:** `kernel/debug.c` and `kernel/debug.h`.
-- [x] **Implement:** `panic_with_regs(const char* msg, Registers* r)` to dump CPU state (EIP/EAX/CS/EFLAGS/etc).
-- [x] **Integrate:** Update IDT `isr_handler` to use the new Panic system on crashes.
-
-## 2. 🧠 PMM Optimization
-
-*Current Status: O(N) Linear Search (First-Fit).*
-
-- [x] **Next-Fit Algorithm:** Add `last_free_index` tracking to `pmm.c`.
-- [x] **Speed Test:** Verify allocations remain fast as memory fills (validated via diagnostics / fragmentation test).
-
-## 3. ⚡ Power Management
-
-*Current Status: Busy waiting 100% CPU.*
-
-- [x] **Idle Loop:** Standardize idle path via `cpu_idle()` (STI+HLT) wrapper (no busy wait).
-- [x] **Shell/Input Yield:** Keyboard blocking read halts CPU until IRQ (race-free, no polling burn).
+- [`TECHNICAL_REVIEW_2026-06-03.md`](TECHNICAL_REVIEW_2026-06-03.md)
+- [`BOOT_MEMORY_LAYOUT.md`](BOOT_MEMORY_LAYOUT.md)
+- [`V0_9_STABILIZATION_PLAN.md`](V0_9_STABILIZATION_PLAN.md)
+- [`SMOKE_TESTS.md`](SMOKE_TESTS.md)
 
 ---
 
-## 4. 🐞 Refactoring & Diagnostics
-- [x] **Consolidate Tests:** Move `test_heap` and `test_ata` from `main.c` into a new module `kernel/core/selftest.c`.
-- [x] **Implement `run_diagnostics()`:** Implement `selftest_run_all()` called at the end of `k_main` that runs all tests and prints a summary report.
-- [x] **Shell Command:** Add `diagnose` to KShell to re-run hardware checks on demand.
-- [x] **Terminal Driver:** Extract VGA console into `kernel/drivers/terminal.c/.h` and remove cross-module `extern term_*` coupling.
+## 1. P0 — Boot and Image Layout Hardening
+
+- [ ] Add explicit `KERNEL_START_SECTOR ?= 60` in the build configuration.
+- [ ] Fail the build if `stage1.bin` is not exactly 512 bytes.
+- [ ] Fail the build if `stage2.bin` exceeds `STAGE2_SECTORS * 512`.
+- [ ] Fail the build if Stage 2 disk range overlaps the kernel disk range.
+- [ ] Fail the build if `kernel.img` cannot fit in the disk image.
+- [ ] Print Stage 2 size, kernel image size, and sector ranges during image creation.
+
+**Acceptance:** an invalid image layout must fail during `make`, not during QEMU
+boot.
 
 ---
 
-## 5. 💾 Storage Hardening (ATA)
+## 2. P0 — Boot Memory Layout Correction
 
-- [x] **LBA28 Read:** Implement real LBA sector reads end-to-end (driver API + `diskread` command + diagnostics validation).
-- [x] **IDENTIFY Detection:** Probe master/slave and gate reads on presence.
-- [x] **Block Registration Gating:** Only register `disk0` when a real device exists (avoid phantom disks).
+- [ ] Correct comments that describe `0x10000` as 1 MiB.
+- [ ] Decide and document whether the near-term kernel load address remains
+      `0x10000` or moves to `0x100000`.
+- [ ] Add linker symbols for `kernel_start` and `kernel_end`.
+- [ ] Reserve the actual linker-provided kernel range in PMM.
+- [ ] Ensure the PMM bitmap cannot overlap the kernel image silently.
+- [ ] Document all low-memory reserved ranges in `docs/BOOT_MEMORY_LAYOUT.md`.
 
----
-
-## 6. 🔧 Driver Hardening Notes
-
-- [x] **Keyboard Buffer Policy:** When the ring buffer is full, the newest keypress is dropped (non-blocking overflow behavior).
-- [x] **RTC Robustness:** CMOS reads wait for update-in-progress to clear before sampling.
-
----
-
-## 7. 📁 Filesystem / VFS Foundation (Phase 1)
-
-- [x] **Define VFS API:** Static mount table + FD table (`open/read/close`).
-- [x] **Implement VFS Core:** Longest-prefix mount resolution + safe bounds validation.
-- [x] **Block Device Registry:** Generic `BlockDevice` registry API.
-- [x] **ATA Block Wrapper:** Register ATA as `disk0` (and optional `disk1`) via block layer.
-- [x] **Shell Visibility:** Add `blkinfo` and `mounts` commands.
+**Acceptance:** the allocator never frees kernel, boot handoff, bitmap, stack, or
+page-table pages.
 
 ---
 
-## 8. 📁 Filesystem / VFS Bring-up (Phase 2)
+## 3. P0 — BootInfo and E820 Correctness
 
-- [x] **DevFS:** Mount `/dev` and expose `/dev/disk0`, `/dev/null`, `/dev/zero`.
-- [x] **MBR Scan:** Register `disk0p1..disk0p4` partition block devices.
-- [x] **PyFS Probe (RO):** Probe `disk0p1` and mount at `/py` if superblock valid.
-- [x] **Verification Command:** `pyfs_sb` reads `/py/superblock` through VFS.
+- [ ] Zero the BootInfo structure before Stage 2 fills it.
+- [ ] Write `mmap_count` as a 32-bit field to match `BootInfo` in C.
+- [ ] Document `kernel_load_addr` representation clearly.
+- [ ] Make E820 free-range handling conservative:
+  - [ ] freeing usable ranges: align start up, align end down;
+  - [ ] reserving used ranges: align start down, align end up.
+- [ ] Add diagnostics for malformed/empty E820 maps.
+
+**Acceptance:** C and assembly agree exactly on the BootInfo layout, and PMM
+never frees partially usable boundary pages.
 
 ---
 
-## 9. ✅ Completed Tasks (Archive)
+## 4. P1 — Terminal and Shell Maintainability
 
-- [x] Keyboard Driver & KShell.
-- [x] Time/RTC.
-- [x] PIC Remapping.
+- [ ] Implement terminal scroll-up instead of clear-on-bottom.
+- [ ] Convert shell command dispatch to a command table.
+- [ ] Generate `help` output from command metadata.
+- [ ] Prepare the command table for English + Arabic aliases.
+
+**Acceptance:** long diagnostic output remains visible, and adding commands no
+longer requires a fragile conditional chain.
+
+---
+
+## 5. P1 — PyFS Real Read-Only Bring-up
+
+- [ ] Validate PyFS superblock with clear errors.
+- [ ] Implement root directory listing.
+- [ ] Implement open/read for at least one regular file.
+- [ ] Ensure all disk access goes through the block layer.
+- [ ] Keep PyFS read-only until read-path correctness is proven.
+
+**Acceptance:** PyFS is no longer only a superblock probe; it can expose real
+files through VFS.
+
+---
+
+## 6. P1 — VFS-Backed KShell Storage Commands
+
+- [ ] Add `ls <path>` through VFS.
+- [ ] Add `cat <path>` through VFS for small files.
+- [ ] Verify `ls /dev` works through DevFS.
+- [ ] Verify `ls /py` works when PyFS is mounted.
+- [ ] Verify invalid paths return readable errors.
+
+**Acceptance:** shell storage commands test the generic VFS layer instead of
+calling filesystem internals directly.
+
+---
+
+## 7. P2 — Smoke Tests and Release Hygiene
+
+- [ ] Keep `docs/SMOKE_TESTS.md` updated with expected command results.
+- [ ] Add optional QEMU smoke-test automation if practical.
+- [ ] Add a clean source export/archive process.
+- [ ] Exclude `.git/`, `.vs/`, `build/`, generated images, and editor files from
+      handoff archives.
+- [ ] Unify visible version strings (`v0.8.1` vs `v0.8`) before release tagging.
+
+**Acceptance:** a reviewer can build, boot, test, and inspect a clean archive
+without private/editor artifacts.
+
+---
+
+## Completed v0.8.x Foundation Work
+
+- [x] Panic/debug foundation with register dump path.
+- [x] PMM next-fit allocator optimization.
+- [x] `cpu_idle()` via STI+HLT for idle waiting.
+- [x] Runtime diagnostics through `diagnose`.
+- [x] VGA terminal extraction into `kernel/drivers/terminal.c/.h`.
+- [x] ATA LBA28 read path and `diskread` command.
+- [x] IDENTIFY-based disk detection.
+- [x] Block device registry.
+- [x] DevFS mounted at `/dev`.
+- [x] MBR partition registration.
+- [x] PyFS superblock probe and `/py/superblock` verification.
+
+---
+
+## Explicitly Deferred Until After v0.9
+
+- GUI / desktop shell;
+- networking;
+- audio;
+- package manager;
+- full Arabic shaping/bidi console;
+- Baa/Takween mixed-kernel migration;
+- process scheduler/userland expansion;
+- local AI / fuzzy command execution.

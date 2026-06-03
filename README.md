@@ -1,10 +1,13 @@
 # PyramidOS
 
-> **Kernel Version:** v0.8.1 (Hardened)
+> **Kernel Version:** v0.8.1 (Hardened docs pass)
 > **Architecture:** x86 (32-bit Protected Mode)  
 > **Boot Standard:** Legacy BIOS (Custom Bootloader)
+> **Project Stage:** Experimental kernel / research OS, not a production desktop OS
 
-PyramidOS is a sovereign, monolithic kernel operating system written from scratch in C and Assembly. It features a custom multi-stage bootloader, a robust memory management system, and a command-line interface inspired by the responsiveness of classic systems.
+PyramidOS is an experimental Arabic-first monolithic kernel written from scratch in C and Assembly. It features a custom multi-stage BIOS bootloader, protected-mode kernel bring-up, memory-management foundations, hardware drivers, a kernel shell, and early storage/VFS work.
+
+The project should currently be understood as a serious systems-programming and OS-research project, **not** as a production-ready Windows/Linux replacement.
 
 ---
 
@@ -14,24 +17,47 @@ The system boots into a **Protected Mode Shell** with memory management, hardwar
 
 | Component | Status | Description |
 |-----------|--------|-------------|
-| **Bootloader (Stage 1/2)** | ✅ Stable | MBR, A20 Enable, E820 Map, Kernel Header Parsing, PM Switch. |
-| **Kernel Entry** | ✅ Stable | Stack setup, GDT, IDT (Exception Handling), ISR Stubs. |
-| **Memory (PMM/VMM)** | ✅ Stable | Bitmap Allocator, Paging Enabled (Identity Mapped). |
-| **PIC Driver** | ✅ Stable | 8259 PIC Remapped to vectors 32-47. |
-| **Keyboard Driver** | ✅ Stable | Scancode Set 1 translation, Shift/Caps state, Circular Input Buffer. |
-| **System Timer (PIT)** | ✅ Stable | 8253 PIT configured at 100Hz for system ticks and sleep. |
-| **Real-Time Clock (RTC)** | ✅ Stable | CMOS register parsing for Wall Clock Time (Y/M/D H:M:S). |
-| **KShell** | ✅ Stable | Interactive command interpreter with history and backspace support. |
-| **Terminal (VGA Text Mode)** | ✅ Stable | Text Mode (80x25) with hardware cursor support. |
-| **CPU Idle / Power Management** | ✅ Stable | Uses STI+HLT (`cpu_idle()`) to avoid busy-waiting when idle. |
-| **Kernel Heap** | ✅ Stable | Doubly-linked list allocator with `kmalloc`/`kfree` and coalescing. |
-| **VMM** | ✅ Stable | Paging enabled; Heap mapped to `0xD0000000`. |
+| **Bootloader (Stage 1/2)** | ✅ Working | MBR, A20 Enable, E820 Map, Kernel Header Parsing, PM Switch. |
+| **Kernel Entry** | ✅ Working | Stack setup, GDT, IDT (Exception Handling), ISR Stubs. |
+| **Memory (PMM/VMM)** | ⚠️ Working, Needs Hardening | Bitmap Allocator, Paging Enabled (Identity Mapped). |
+| **PIC Driver** | ✅ Working | 8259 PIC Remapped to vectors 32-47. |
+| **Keyboard Driver** | ✅ Working | Scancode Set 1 translation, Shift/Caps state, Circular Input Buffer. |
+| **System Timer (PIT)** | ✅ Working | 8253 PIT configured at 100Hz for system ticks and sleep. |
+| **Real-Time Clock (RTC)** | ✅ Working | CMOS register parsing for Wall Clock Time (Y/M/D H:M:S). |
+| **KShell** | ✅ Working | Interactive command interpreter with history and backspace support. |
+| **Terminal (VGA Text Mode)** | ✅ Working, Needs Scrolling | Text Mode (80x25) with hardware cursor support. |
+| **CPU Idle / Power Management** | ✅ Working | Uses STI+HLT (`cpu_idle()`) to avoid busy-waiting when idle. |
+| **Kernel Heap** | ✅ Working | Doubly-linked list allocator with `kmalloc`/`kfree` and coalescing. |
+| **VMM** | ⚠️ Working, Early Design | Paging enabled; Heap mapped to `0xD0000000`. |
 | **Storage (ATA/PIO)** | 🚧 In Progress | LBA28 PIO reads (Read-Only) + IDENTIFY-based presence detection, stricter status checks. |
-| **Block Layer (Registry)** | ✅ Stable | Generic `BlockDevice` registry; ATA registered only when a real device is present (`disk0`, optional `disk1`). |
-| **DevFS (/dev)** | ✅ Stable | Virtual device filesystem exposing `/dev/disk0`, `/dev/disk1`, `/dev/null`, `/dev/zero`. |
-| **Partition Discovery (MBR)** | ✅ Stable | Parses MBR and registers `disk0p1..disk0p4` block devices (read-only). |
-| **VFS (Foundation)** | ✅ Stable | Static mount table + FD table; `/` is `nullfs`, `/dev` is `devfs`. |
+| **Block Layer (Registry)** | ✅ Working | Generic `BlockDevice` registry; ATA registered only when a real device is present (`disk0`, optional `disk1`). |
+| **DevFS (/dev)** | ✅ Working | Virtual device filesystem exposing `/dev/disk0`, `/dev/disk1`, `/dev/null`, `/dev/zero`. |
+| **Partition Discovery (MBR)** | ✅ Working | Parses MBR and registers `disk0p1..disk0p4` block devices (read-only). |
+| **VFS (Foundation)** | 🚧 Foundation | Static mount table + FD table; `/` is `nullfs`, `/dev` is `devfs`. |
 | **PyFS (Read-Only Bring-up)** | 🚧 In Progress | Probes `disk0p1` and mounts at `/py` if superblock is valid; exposes `/py/superblock` for verification. |
+
+---
+
+## ⚠️ Engineering Review Notes
+
+A documentation review on 2026-06-03 identified several high-priority correctness risks that should be resolved before adding GUI, networking, multitasking expansion, or Baa/Takween migration work.
+
+| Finding | Priority | Action |
+|---|---:|---|
+| Kernel load comment says 1 MiB, but `0x10000` is 64 KiB | P0 | Correct docs/comments or move kernel to `0x100000` consistently. |
+| PMM bitmap is fixed at `0x20000` | P0 | Prove no overlap or place dynamically after `kernel_end`. |
+| Stage 2/kernel disk layout lacks hard size guards | P0 | Add Makefile image-layout checks. |
+| E820 usable ranges should be freed conservatively | P0 | Free only fully usable pages: start up, end down. |
+| BootInfo field writes should match C layout exactly | P0 | Write `mmap_count` as a dword and zero the structure before use. |
+| Shell and terminal need maintainability polish | P1 | Add command table and terminal scrolling. |
+
+Read the full review before planning the next sprint:
+
+- [`docs/TECHNICAL_REVIEW_2026-06-03.md`](docs/TECHNICAL_REVIEW_2026-06-03.md)
+- [`docs/BOOT_MEMORY_LAYOUT.md`](docs/BOOT_MEMORY_LAYOUT.md)
+- [`docs/V0_9_STABILIZATION_PLAN.md`](docs/V0_9_STABILIZATION_PLAN.md)
+- [`docs/SMOKE_TESTS.md`](docs/SMOKE_TESTS.md)
+- [`docs/PROJECT_POSITIONING.md`](docs/PROJECT_POSITIONING.md)
 
 ---
 
@@ -142,7 +168,7 @@ Once booted, the **KShell** accepts the following commands:
 
 ## 🧠 Architecture Overview
 
-1. **Boot Sequence:** BIOS -> MBR (Stage 1) -> Loader (Stage 2) -> Protected Mode -> Kernel (`0x10000`).
+1. **Boot Sequence:** BIOS -> MBR (Stage 1) -> Loader (Stage 2) -> Protected Mode -> Kernel (`0x10000`, currently 64 KiB).
 2. **Initialization:**
     * **PMM:** Reads E820 map, initializes Bitmap at `0x20000`.
     * **IDT:** Sets up 256 interrupt vectors (Exceptions + IRQs).
@@ -156,6 +182,7 @@ Once booted, the **KShell** accepts the following commands:
 ## 🔮 Roadmap Snapshot
 
 * **Current:** Storage consumption bring-up: DevFS + MBR partitions + PyFS read-only probe.
-* **Next Up:** PyFS real directory/file reads + VFS-backed shell commands (`ls`, `cat`, etc).
+* **Immediate hardening:** Boot/memory layout documentation, build image guards, PMM reserved-region correctness, BootInfo consistency.
+* **Next milestone:** `v0.9 — Storage + VFS Reality Check`: PyFS real directory/file reads + VFS-backed shell commands (`ls`, `cat`, etc).
 
-*See `docs/` for detailed Roadmap Layers.*
+*See `docs/` for detailed Roadmap Layers and the v0.9 stabilization plan.*

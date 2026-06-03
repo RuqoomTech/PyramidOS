@@ -10,8 +10,9 @@ OUTPUT_FORMAT(elf32-i386)
 
 SECTIONS {
     /* 
-     * The kernel is loaded at physical 1MB (0x10000).
-     * We set the location counter (.) to this address.
+     * The kernel is currently loaded at physical 0x10000 (64 KiB).
+     * NOTE: 0x10000 is not 1 MiB; 1 MiB would be 0x100000.
+     * Keep this value synchronized with Stage 2 and PMM reservations.
      */
     . = 0x00010000;
 

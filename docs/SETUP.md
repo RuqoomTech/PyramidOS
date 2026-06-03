@@ -28,11 +28,11 @@ WSL allows you to run a genuine Linux environment directly on Windows.
 
 ## Step 2: Install Dependencies
 
-We support two build modes: **Quick Start** (Native GCC) and **Production** (Cross-Compiler). The build system automatically detects which one you have.
+The build system can fall back to native `gcc -m32`, but serious kernel work should use an `i686-elf` cross-compiler. A cross-compiler avoids accidental host-OS assumptions and makes the freestanding target explicit.
 
-### Option A: Quick Start (Recommended for Beginners)
+### Option A: Quick Start (Acceptable for early local experiments)
 
-This uses your Linux distribution's standard compiler. It is sufficient for the current Phase 1 & 2 development.
+This uses your Linux distribution's standard compiler through the Makefile fallback. It is convenient, but it is not the preferred long-term path for a freestanding OS kernel.
 
 1. Open your **Ubuntu** terminal.
 2. Update sources and install tools:
@@ -42,9 +42,9 @@ This uses your Linux distribution's standard compiler. It is sufficient for the 
     sudo apt install -y build-essential nasm qemu-system-x86 make
     ```
 
-### Option B: Production Setup (Cross-Compiler)
+### Option B: Recommended Setup (Cross-Compiler)
 
-*Recommended for advanced development to prevent host system library contamination.*
+*Recommended for all serious PyramidOS development.*
 
 1. Install build dependencies:
 
@@ -52,7 +52,7 @@ This uses your Linux distribution's standard compiler. It is sufficient for the 
     sudo apt install -y bison flex libgmp-dev libmpc-dev libmpfr-dev texinfo
     ```
 
-2. Build the `i686-elf` toolchain (This takes 10-30 minutes):
+2. Build the `i686-elf` toolchain. Version numbers below are examples; newer compatible Binutils/GCC releases may be used if the build remains reproducible:
 
     ```bash
     # Setup vars
@@ -86,6 +86,19 @@ This uses your Linux distribution's standard compiler. It is sufficient for the 
     ```bash
     echo 'export PATH="$HOME/opt/cross/bin:$PATH"' >> ~/.bashrc
     source ~/.bashrc
+    ```
+
+4. Verify the toolchain is active:
+
+    ```bash
+    which i686-elf-gcc
+    i686-elf-gcc -dumpmachine
+    ```
+
+    Expected target:
+
+    ```text
+    i686-elf
     ```
 
 ---
@@ -133,6 +146,21 @@ This uses your Linux distribution's standard compiler. It is sufficient for the 
 - **Windows 10:** You may need an X Server (like [VcXsrv](https://sourceforge.net/projects/vcxsrv/)) running on Windows to see the QEMU window.
   - *VcXsrv config:* Select "Disable access control" during launch.
   - *WSL config:* `export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0`
+
+---
+
+## Required Review Before Kernel Growth
+
+Before adding larger kernel features, read:
+
+- [`TECHNICAL_REVIEW_2026-06-03.md`](TECHNICAL_REVIEW_2026-06-03.md)
+- [`BOOT_MEMORY_LAYOUT.md`](BOOT_MEMORY_LAYOUT.md)
+- [`V0_9_STABILIZATION_PLAN.md`](V0_9_STABILIZATION_PLAN.md)
+- [`SMOKE_TESTS.md`](SMOKE_TESTS.md)
+
+The most important warning is that the current kernel load address is `0x10000`
+(64 KiB), while some older comments called it 1 MiB. Treat the boot/memory layout
+as high-risk until the v0.9 hardening tasks are complete.
 
 ---
 
