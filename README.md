@@ -51,13 +51,10 @@ A documentation review on 2026-06-03 identified several high-priority correctnes
 | BootInfo field writes should match C layout exactly | P0 | Write `mmap_count` as a dword and zero the structure before use. |
 | Shell and terminal need maintainability polish | P1 | Add command table and terminal scrolling. |
 
-Read the full review before planning the next sprint:
+The review findings are now merged into the master roadmap so planning has one source of truth:
 
-- [`docs/TECHNICAL_REVIEW_2026-06-03.md`](docs/TECHNICAL_REVIEW_2026-06-03.md)
-- [`docs/BOOT_MEMORY_LAYOUT.md`](docs/BOOT_MEMORY_LAYOUT.md)
-- [`docs/V0_9_STABILIZATION_PLAN.md`](docs/V0_9_STABILIZATION_PLAN.md)
-- [`docs/SMOKE_TESTS.md`](docs/SMOKE_TESTS.md)
-- [`docs/PROJECT_POSITIONING.md`](docs/PROJECT_POSITIONING.md)
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — master roadmap, risk register, release gates, and v0.9 scope.
+- Archived review notes are kept under `docs/archive/2026-06-03-review/` for history only.
 
 ---
 
@@ -185,4 +182,4 @@ Once booted, the **KShell** accepts the following commands:
 * **Immediate hardening:** Boot/memory layout documentation, build image guards, PMM reserved-region correctness, BootInfo consistency.
 * **Next milestone:** `v0.9 — Storage + VFS Reality Check`: PyFS real directory/file reads + VFS-backed shell commands (`ls`, `cat`, etc).
 
-*See `docs/` for detailed Roadmap Layers and the v0.9 stabilization plan.*
+*Start with [`docs/ROADMAP.md`](docs/ROADMAP.md). The layered roadmap files remain as supporting strategy/architecture/future-reference documents.*

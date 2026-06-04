@@ -151,16 +151,11 @@ This uses your Linux distribution's standard compiler through the Makefile fallb
 
 ## Required Review Before Kernel Growth
 
-Before adding larger kernel features, read:
-
-- [`TECHNICAL_REVIEW_2026-06-03.md`](TECHNICAL_REVIEW_2026-06-03.md)
-- [`BOOT_MEMORY_LAYOUT.md`](BOOT_MEMORY_LAYOUT.md)
-- [`V0_9_STABILIZATION_PLAN.md`](V0_9_STABILIZATION_PLAN.md)
-- [`SMOKE_TESTS.md`](SMOKE_TESTS.md)
+Before adding larger kernel features, read [`ROADMAP.md`](ROADMAP.md). It now contains the active risk register, release gates, v0.9 stabilization scope, and smoke-test expectations.
 
 The most important warning is that the current kernel load address is `0x10000`
 (64 KiB), while some older comments called it 1 MiB. Treat the boot/memory layout
-as high-risk until the v0.9 hardening tasks are complete.
+as high-risk until the v0.9 hardening gates are complete. Historical review notes are archived under `docs/archive/2026-06-03-review/`.
 
 ---
 

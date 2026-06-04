@@ -59,9 +59,10 @@ PyramidOS prioritizes:
 - `kernel/lib/`: minimal freestanding helper routines
 
 ## Required Docs For Risky Areas
-- Boot/linker/PMM/VMM changes: update `docs/BOOT_MEMORY_LAYOUT.md`.
-- Storage/VFS/PyFS changes: update `docs/SMOKE_TESTS.md` and the v0.9 plan if scope changes.
-- Public/release claims: keep `docs/PROJECT_POSITIONING.md` honest; do not describe PyramidOS as production-ready.
+- `docs/ROADMAP.md` is the planning source of truth.
+- Boot/linker/PMM/VMM changes: update the roadmap risk register/gates.
+- Storage/VFS/PyFS changes: update the roadmap v0.9 scope and smoke-test gate.
+- Public/release claims: keep the roadmap positioning honest; do not describe PyramidOS as production-ready.
 
 ---
 
@@ -76,3 +77,7 @@ When reporting a bug, include:
 
 ## Security / Responsible Disclosure
 Kernel bugs can represent serious flaws. Report privately to the project owner if the issue is security-sensitive.
+
+## Roadmap Discipline
+
+When changing boot layout, memory management, storage/VFS behavior, shell commands, version labels, or release scope, update `docs/ROADMAP.md` in the same change. Historical review notes live under `docs/archive/2026-06-03-review/` and should not be treated as active sprint docs.

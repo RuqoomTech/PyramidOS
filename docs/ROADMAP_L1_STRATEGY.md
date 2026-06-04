@@ -24,7 +24,8 @@
 | **GUI RTL + Arabic Text** | 📅 | GUI toolkit supports RTL layout mirroring and shaped/bidi text rendering everywhere. |
 | **Baa + Takween Integration (Arabic-first DX)** | 📅 | Build PyramidOS with Baa/Takween and ship Arabic-first developer tooling and project schemas. |
 
-**Detailed plan:** `docs/ROADMAP_ARABIC_FIRST.md`
+**Detailed plan:** `docs/ROADMAP_ARABIC_FIRST.md`  
+**Scheduling rule:** Arabic-first remains the identity, but advanced shaping/bidi/framebuffer work starts only after the v0.9 storage/memory gates in `docs/ROADMAP.md` pass.
 
 ---
 
@@ -52,9 +53,9 @@
 | Feature | Status | Description |
 | :--- | :---: | :--- |
 | **Kernel Entry** | ✅ | Stack setup, Environment cleanup, C Runtime handoff. |
-| **Physical Memory (PMM)** | ✅ | Bitmap allocator, E820 map parsing, 4KB Page Frame allocation. |
+| **Physical Memory (PMM)** | ⚠️ | Bitmap allocator and E820 parsing exist; v0.9 must harden reserved ranges and bitmap placement. |
 | **Interrupts (IDT)** | ✅ | Exception handling (Page Faults, Div-by-zero) & Hardware IRQs. |
-| **Virtual Memory (VMM)** | ✅ | Paging Enabled (CR3/CR0), Identity Mapping, Kernel Higher-Half (Partial). |
+| **Virtual Memory (VMM)** | ⚠️ | Paging enabled with early mappings; higher-half/user isolation is planned, not complete. |
 | **Hardware Interrupts** | ✅ | 8259 PIC Remapping, IRQ Masking/Unmasking. |
 | **Kernel Heap** | ✅ | Dynamic memory (`kmalloc`/`kfree`) with coalescing and safety checks. |
 | **Multitasking** | 📅 | Custom Process Control Blocks (PCB), Round-Robin Scheduler. |

@@ -10,18 +10,18 @@ This document details the internal design of the kernel subsystems. It bridges t
 
 * **Algorithm:** Bitmap Allocator (Optimized with Next-Fit).
 * **Granularity:** 4KiB Blocks (Frames).
-* **Metadata Storage:** Physical `0x00020000`.
+* **Metadata Storage:** currently physical `0x00020000`; this is a v0.9 risk and must either be proven safe against `kernel_end` or moved dynamically.
 
 ### 1.2 Virtual Memory Manager (VMM)
 
 * **Mechanism:** x86 Paging (CR3).
-* **Architecture Goal (Milestone 4): Higher-Half Kernel**
+* **Architecture Goal (after v0.9/v0.10 groundwork): Higher-Half Kernel**
   * **User Space:** `0x00000000` to `0xBFFFFFFF` (3GB).
   * **Kernel Space:** `0xC0000000` to `0xFFFFFFFF` (1GB).
   * **Implementation:**
-    * Linker moves symbols to `0xC0000000`.
-    * Bootloader (or `entry.asm`) sets up a Page Table mapping `0xC00...` -> `0x001...` (Physical).
-    * This prevents User Mode apps from ever seeing Kernel code (protected by Supervisor bit).
+    * Linker eventually moves virtual symbols to `0xC0000000`.
+    * Bootloader or early `entry.asm` maps high virtual kernel addresses to the chosen physical load region.
+    * User access is prevented with supervisor-only page permissions; merely mapping higher-half is not enough without correct permissions and Ring 3 setup.
 
 ### 1.3 Kernel Heap
 

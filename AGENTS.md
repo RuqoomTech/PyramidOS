@@ -24,7 +24,7 @@
 ## Testing Guidelines
 - There is no host-side unit test framework yet; validation is boot/runtime based.
 - Minimum check for each change: build (`make` or `make debug`) and boot (`make run`).
-- Before storage/VFS work is considered healthy, follow `docs/SMOKE_TESTS.md`.
+- Before storage/VFS work is considered healthy, follow the smoke-test gate in `docs/ROADMAP.md`.
 - At KShell, run `diagnose`; for storage/VFS changes also verify `blkinfo`, `mounts`, `pyfs_sb`, and `diskread 0`.
 - For v0.9+ storage work, also verify VFS-backed `ls /dev`, `ls /py`, and `cat /py/<small-test-file>` once implemented.
 - Include exact reproduction steps and observed output when reporting regressions.
@@ -40,7 +40,8 @@
 - Report security-sensitive kernel issues privately to maintainers instead of filing public issues.
 
 ## Current Engineering Priorities
-- Treat `docs/TECHNICAL_REVIEW_2026-06-03.md` as the current review baseline.
-- Do not expand into GUI, networking, audio, local AI, or Baa/Takween migration before the v0.9 boot/memory/storage stabilization work is complete.
-- Any change touching boot, linker, PMM, VMM, Stage 2, or image layout must update `docs/BOOT_MEMORY_LAYOUT.md` if assumptions change.
+- Treat `docs/ROADMAP.md` as the current review baseline and planning source of truth.
+- Do not expand into GUI, networking, audio, local AI, or Baa/Takween migration before the v0.9 boot/memory/storage gates pass.
+- Any change touching boot, linker, PMM, VMM, Stage 2, image layout, storage/VFS behavior, shell commands, version labels, or release scope must update `docs/ROADMAP.md` in the same change.
 - Shared archives must exclude `.git/`, `.vs/`, `build/`, and generated images.
+- Historical review notes live under `docs/archive/2026-06-03-review/` and should not be treated as active sprint docs.

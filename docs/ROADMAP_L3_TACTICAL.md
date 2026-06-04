@@ -6,16 +6,18 @@ and repeatable smoke testing.
 **Current Kernel:** v0.8.1 documentation/hardening baseline  
 **Target:** v0.9 — Storage + VFS Reality Check
 
-> **Objective:** Fix the highest-risk engineering assumptions before adding GUI,
-> networking, multitasking expansion, Baa/Takween migration, or advanced
-> Arabic-console work.
+> The full risk register, release gates, and v0.9 scope now live in
+> [`ROADMAP.md`](ROADMAP.md). This Layer 3 file is the short execution checklist.
 
-See also:
+---
 
-- [`TECHNICAL_REVIEW_2026-06-03.md`](TECHNICAL_REVIEW_2026-06-03.md)
-- [`BOOT_MEMORY_LAYOUT.md`](BOOT_MEMORY_LAYOUT.md)
-- [`V0_9_STABILIZATION_PLAN.md`](V0_9_STABILIZATION_PLAN.md)
-- [`SMOKE_TESTS.md`](SMOKE_TESTS.md)
+## Sprint Rule
+
+Do not start GUI, networking, audio, package management, full Arabic shaping,
+Baa/Takween migration, scheduler expansion, or local AI work during this sprint.
+
+The goal is boring reliability: build guards, boot/memory correctness, terminal
+scrolling, shell maintainability, PyFS real reads, and VFS-backed commands.
 
 ---
 
@@ -35,13 +37,11 @@ boot.
 
 ## 2. P0 — Boot Memory Layout Correction
 
-- [ ] Correct comments that describe `0x10000` as 1 MiB.
-- [ ] Decide and document whether the near-term kernel load address remains
-      `0x10000` or moves to `0x100000`.
+- [ ] Decide whether the near-term kernel load address remains `0x10000` or moves to `0x100000`.
 - [ ] Add linker symbols for `kernel_start` and `kernel_end`.
 - [ ] Reserve the actual linker-provided kernel range in PMM.
 - [ ] Ensure the PMM bitmap cannot overlap the kernel image silently.
-- [ ] Document all low-memory reserved ranges in `docs/BOOT_MEMORY_LAYOUT.md`.
+- [ ] Reserve BootInfo, E820 map, stack, page tables, and allocator metadata.
 
 **Acceptance:** the allocator never frees kernel, boot handoff, bitmap, stack, or
 page-table pages.
@@ -52,7 +52,7 @@ page-table pages.
 
 - [ ] Zero the BootInfo structure before Stage 2 fills it.
 - [ ] Write `mmap_count` as a 32-bit field to match `BootInfo` in C.
-- [ ] Document `kernel_load_addr` representation clearly.
+- [ ] Document `kernel_load_addr` representation clearly in code comments.
 - [ ] Make E820 free-range handling conservative:
   - [ ] freeing usable ranges: align start up, align end down;
   - [ ] reserving used ranges: align start down, align end up.
@@ -103,11 +103,10 @@ calling filesystem internals directly.
 
 ## 7. P2 — Smoke Tests and Release Hygiene
 
-- [ ] Keep `docs/SMOKE_TESTS.md` updated with expected command results.
+- [ ] Keep the smoke-test command list in `ROADMAP.md` updated with expected results.
 - [ ] Add optional QEMU smoke-test automation if practical.
 - [ ] Add a clean source export/archive process.
-- [ ] Exclude `.git/`, `.vs/`, `build/`, generated images, and editor files from
-      handoff archives.
+- [ ] Exclude `.git/`, `.vs/`, `build/`, generated images, and editor files from handoff archives.
 - [ ] Unify visible version strings (`v0.8.1` vs `v0.8`) before release tagging.
 
 **Acceptance:** a reviewer can build, boot, test, and inspect a clean archive
@@ -128,16 +127,3 @@ without private/editor artifacts.
 - [x] DevFS mounted at `/dev`.
 - [x] MBR partition registration.
 - [x] PyFS superblock probe and `/py/superblock` verification.
-
----
-
-## Explicitly Deferred Until After v0.9
-
-- GUI / desktop shell;
-- networking;
-- audio;
-- package manager;
-- full Arabic shaping/bidi console;
-- Baa/Takween mixed-kernel migration;
-- process scheduler/userland expansion;
-- local AI / fuzzy command execution.
