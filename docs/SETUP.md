@@ -151,7 +151,7 @@ This uses your Linux distribution's standard compiler through the Makefile fallb
 
 ## Required Review Before Kernel Growth
 
-Before adding larger kernel features, read [`ROADMAP.md`](ROADMAP.md). It now contains the active risk register, release gates, v0.9 stabilization scope, and smoke-test expectations.
+Before adding larger kernel features, read [`ROADMAP.md`](ROADMAP.md). It now contains the active risk register, release gates, v0.9 stabilization scope, smoke-test expectations, and the rule that post-Unix research must not derail foundation work.
 
 The most important warning is that the current kernel load address is `0x10000`
 (64 KiB), while some older comments called it 1 MiB. Treat the boot/memory layout
@@ -164,3 +164,39 @@ as high-risk until the v0.9 hardening gates are complete. Historical review note
 - **"Command not found: make"**: Run `sudo apt install build-essential`.
 - **"fatal: unable to open output file"**: Ensure you run `make clean && make` (or just `make`) before `make run`.
 - **QEMU Error "Could not initialize SDL"**: This means WSL cannot find a display. Ensure you are on Windows 11 or have an X Server running on Windows 10.
+
+
+---
+
+## AI-Assisted Development Policy
+
+AI can be useful for PyramidOS development, especially for:
+
+- comparing old OS designs;
+- drafting documentation;
+- generating QEMU smoke-test scripts;
+- suggesting small prototypes;
+- reviewing invariants and possible failure cases.
+
+Do not blindly merge AI-generated code in these areas:
+
+- paging and memory allocation;
+- interrupt stubs and calling conventions;
+- disk write paths;
+- filesystem metadata updates;
+- syscall/security boundaries;
+- compiler/runtime ABI code.
+
+For those areas, require manual review, emulator testing, and updated roadmap
+invariants.
+
+## Suggested Research Reading
+
+These are not implementation requirements, but they help keep PyramidOS
+post-Unix aware:
+
+- Plan 9 from Bell Labs — namespaces and distributed resource model.
+- Project Oberon — coherent language + OS + UI environment.
+- EROS/CapROS — capability systems and persistence.
+- Singularity — software-isolated processes, contracts, and manifests.
+- seL4 — formal verification discipline for kernels.

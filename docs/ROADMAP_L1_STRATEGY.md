@@ -1,9 +1,20 @@
 # Layer 1: Strategic Roadmap (PyramidOS)
 
-**Vision:** A sovereign, monolithic kernel engineered from scratch in C/Assembly. It delivers a user experience inspired by the intuitiveness of Windows 95, but powered by a completely custom, non-proprietary internal architecture.
+**Vision:** A sovereign Arabic-first operating-system project engineered from
+scratch. The near-term kernel is a simple monolithic C/Assembly system for
+learning, control, and momentum; the long-term product should be post-Unix aware,
+capability-conscious, and willing to rethink storage, authority, applications,
+and Arabic-first interaction instead of becoming a toy Linux.
 
 > **Legend:**
 > ✅ = Completed | 🚧 = In Progress | 📅 = Planned | 🔮 = Long Term Vision
+
+## Strategic Rule
+
+PyramidOS may use Unix-like pieces as scaffolding, but it must not accept POSIX,
+byte streams, hierarchical files, ambient authority, or ELF-like executable
+semantics as destiny. Radical ideas belong in the research track until the
+foundation gates in `ROADMAP.md` pass.
 
 ---
 
@@ -29,6 +40,21 @@
 
 ---
 
+## 0.5. 🧪 Post-Unix Research Initiative
+
+**Goal:** keep the project imaginative without damaging engineering focus.
+
+| Feature | Status | Description |
+| :--- | :---: | :--- |
+| **Research Track Document** | ✅ | `ROADMAP_RESEARCH.md` captures post-Unix, AI-assisted, capability/object/persistence experiments. |
+| **AI-Assisted OSDev Policy** | 📅 | Define where AI is allowed: docs, comparison, prototypes, tests, audits; generated kernel code remains untrusted. |
+| **Capability Authority Model** | 🔮 | Explore explicit authority handles/capabilities instead of ambient global access. |
+| **Persistent Object Store** | 🔮 | Explore structured persistent objects beside/above PyFS, not as a v0.9 replacement. |
+| **Structured IPC / Component Model** | 🔮 | Typed messages and manifests instead of byte-stream-only glue. |
+| **System Model Notebook (R0)** | 📅 | After v0.9, define program, object, authority, storage, identity, and message before implementation. |
+
+**Scheduling rule:** research can influence design, but implementation waits
+until current lower-level gates pass.
 ## 1. 🛤️ Milestone 1: The Bootloader (PyramidBL)
 
 **Goal:** Reliably load the kernel payload into memory and transition the CPU to a usable state.

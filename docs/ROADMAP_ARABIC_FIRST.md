@@ -1,6 +1,9 @@
 # Arabic-First Roadmap (PyramidOS)
 
-**Goal:** Arabic is the primary language from power-on (bootloader) to desktop, with real Arabic text rendering (RTL, shaping) and Arabic-first tools. English remains available as an optional debug/developer fallback.
+**Goal:** Arabic is the primary language from power-on (bootloader) to desktop,
+with real Arabic text rendering (RTL, shaping), Arabic-first tools, and Arabic
+system concepts rather than a thin translation layer over English/Unix names.
+English remains available as an optional debug/developer fallback.
 
 > **Legend:**
 > ✅ = Completed | 🚧 = In Progress | 📅 = Planned | 🔮 = Long Term Vision
@@ -16,6 +19,22 @@
 | **Filename Policy** | 📅 | Define comparison rules for VFS/PyFS: byte-compare v1, later optional normalization/collation. |
 | **RTL Policy** | 📅 | Define what “RTL by default” means in console + GUI and how mixed text behaves. |
 | **Language Policy** | 📅 | Arabic-first strings everywhere; define where English fallback is allowed (panic, diagnostics, dev mode). |
+| **Arabic Concept Model** | 📅 | Define Arabic names for program, object, authority/capability, storage view, message, process, and system service. |
+
+---
+
+## A0.5. Arabic-First Does Not Mean Translation-Only
+
+PyramidOS should not merely translate English Unix terms into Arabic. The
+Arabic-first track should shape the actual interaction model:
+
+- command names and help should be Arabic-native, with English aliases for devs;
+- future object/storage views should have Arabic terminology from the start;
+- diagnostics should be understandable to Arabic users, not just copied kernel
+  jargon;
+- RTL behavior, cursor movement, filenames, and search are core system behavior.
+
+This work should coordinate with `ROADMAP_RESEARCH.md`.
 
 ---
 
@@ -120,6 +139,7 @@
 | **Takween OS Pipeline** | 📅 | One-command build/image/run; Arabic-first project schema and output. |
 | **Baa Freestanding Target** | 📅 | `i386-elf-baremetal` target; kernel-safe subset + no hosted runtime assumptions. |
 | **Arabic-First Developer UX** | 📅 | Arabic diagnostics, Arabic docs, Arabic-first project templates. |
+| **AI-Assisted Arabic Docs/Diagnostics** | 🔮 | Use AI to draft/review Arabic docs and glossary, but keep terminology reviewed by maintainers. |
 
 ---
 

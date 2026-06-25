@@ -5,6 +5,28 @@ This document captures long-term visions, experimental features, and ecosystem g
 > **Philosophy:** "Windows 95 Soul, Pyramid Heart."
 > We recreate the classic user experience, but every byte of the underlying technology is a custom, non-proprietary invention.
 
+> **Research discipline:** These ideas are allowed to be strange. They are not
+> allowed to bypass v0.9/v0.10 correctness gates.
+
+## 0. 🧪 Post-Unix Research Backlog
+
+* **Capability-first authority:**
+  * Explicit authority handles for files, devices, IPC endpoints, and services.
+  * Future process manifests declare requested powers instead of assuming global access.
+* **Persistent objects:**
+  * Structured objects as a normal storage unit above/beside PyFS.
+  * Stable object identities, references, metadata, and recovery rules.
+* **Structured IPC:**
+  * Typed message envelopes and schemas instead of text-stream-only glue.
+  * Shared buffers for large data with explicit ownership/capability transfer.
+* **Live inspectable system:**
+  * Kernel/system object registry for `inspect`-style debugging.
+  * Logs and diagnostics as structured records, not only text lines.
+* **AI-assisted OSDev workflow:**
+  * AI can summarize papers, write prototypes, and generate tests.
+  * AI-generated kernel code must be treated as untrusted until reviewed and tested.
+
+
 ---
 
 ## 1. 🔮 "Blue Sky" Bootloader Innovations

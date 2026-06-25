@@ -14,10 +14,14 @@ and repeatable smoke testing.
 ## Sprint Rule
 
 Do not start GUI, networking, audio, package management, full Arabic shaping,
-Baa/Takween migration, scheduler expansion, or local AI work during this sprint.
+Baa/Takween migration, scheduler expansion, capability runtime, persistent object
+store, structured IPC runtime, or local AI work during this sprint.
 
 The goal is boring reliability: build guards, boot/memory correctness, terminal
 scrolling, shell maintainability, PyFS real reads, and VFS-backed commands.
+
+Research work is allowed only as documentation updates under `ROADMAP_RESEARCH.md`
+or Layer 4/5 notes. It must not consume v0.9 implementation scope.
 
 ---
 
@@ -108,6 +112,7 @@ calling filesystem internals directly.
 - [ ] Add a clean source export/archive process.
 - [ ] Exclude `.git/`, `.vs/`, `build/`, generated images, and editor files from handoff archives.
 - [ ] Unify visible version strings (`v0.8.1` vs `v0.8`) before release tagging.
+- [ ] Keep post-Unix/AI research notes out of active v0.9 implementation tasks.
 
 **Acceptance:** a reviewer can build, boot, test, and inspect a clean archive
 without private/editor artifacts.

@@ -1,12 +1,27 @@
 # Baa + Takween Plan for Building PyramidOS
 
 ## Objective
-Enable PyramidOS to be built with **Baa (language/compiler)** and **Takween (build system)** for real bare-metal OS workflows (bootloader, freestanding kernel, disk image, QEMU run), not just user-space apps.
+Enable PyramidOS to be built with **Baa (language/compiler)** and **Takween
+(build system)** for real bare-metal OS workflows (bootloader, freestanding
+kernel, disk image, QEMU run), not just user-space apps.
+
+This is a future integration track. It must not distract from the v0.9
+boot/memory/storage gates.
 
 ## Current Gap Summary
 - PyramidOS is currently **32-bit i386 freestanding** (`i686-elf-*`, custom linker, raw disk image).
 - Baa currently focuses on **x86_64 Windows/Linux user-space targets**.
 - Takween MVP is **Windows-first** and uses `cmd /c` + `.exe` assumptions.
+
+## Design Rules
+
+- Baa/Takween must support PyramidOS as a freestanding kernel target, not force
+  hosted Windows/Linux assumptions into the build.
+- The first success is a mixed build, not a full rewrite.
+- Baa should help PyramidOS move toward a sovereign application/runtime model
+  later, but early kernel correctness remains C/Assembly-led.
+- AI may assist with compiler tests and build scripts, but generated ABI/runtime
+  code must be reviewed as unsafe until proven.
 
 ## Required Work in Baa
 1. Add target: `i386-elf-baremetal`.
@@ -66,3 +81,4 @@ Enable PyramidOS to be built with **Baa (language/compiler)** and **Takween (bui
 2. Add Baa freestanding flags and negative tests.
 3. Extend Takween config schema for kernel projects.
 4. Implement a pilot mixed build in PyramidOS (single Baa module linked with existing C kernel).
+5. Keep all Baa/Takween work behind `ROADMAP.md` gates until v0.9 exits.

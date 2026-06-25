@@ -3,7 +3,9 @@
 This document outlines the creative, modern features that will differentiate PyramidOS from being just a "retro clone." It focuses on **Performance as a Feature**—making the OS feel telepathic, fluid, and weightless.
 
 > **Core Philosophy:** "Infinite Capability, Zero Latency."
-> We reject Electron apps, web-based system UI, and telemetry. We embrace native speed, vector graphics, and localized intelligence.
+> We reject Electron apps, web-based system UI, and telemetry. We embrace native speed, vector graphics, localized intelligence, and explicit user authority.
+>
+> **Important:** Zenith ideas are product imagination, not sprint commitments. They must be pulled into architecture only after design notes, tests, and lower-level gates exist.
 
 ---
 
@@ -20,11 +22,11 @@ This document outlines the creative, modern features that will differentiate Pyr
 
 ## 2. 📂 The "Nebula" Data Model (Beyond Folders)
 
-*Folders are a relic of filing cabinets. Modern data is fluid.*
+*Folders are useful scaffolding, but they should not be the only way the system understands data.*
 
-* **Tag-Based Filesystem:**
-  * Files don't live in *one* folder. They live in a database pool.
-  * A document can exist in "Work," "2025," and "Urgent" simultaneously without duplication.
+* **Object + View Storage:**
+  * PyFS remains the durable low-level store, but the user-facing model can expose objects, tags, and smart views.
+  * A document can appear in "Work," "2025," and "Urgent" simultaneously without duplication.
 * **Multi-Disk Union/Merge Pools (PyPoolFS):**
   * A future storage layer that merges multiple disks into one namespace and keeps running when a disk disappears (graceful degradation).
 * **"Smart Views" (Virtual Folders):**
@@ -57,9 +59,9 @@ This document outlines the creative, modern features that will differentiate Pyr
 
 *Security that doesn't annoy the user.*
 
-* **Disposable Runtimes:**
-  * Every program runs in a lightweight, invisible sandbox by default.
-  * If an app crashes, the window implodes visually, but the kernel (and other apps) doesn't even stutter.
+* **Capability-Gated Runtimes:**
+  * Every program receives explicit authority handles rather than ambient global access.
+  * Disposable sandboxing is a later UX layer on top of a capability-conscious process model.
 * **Permission spoofing:**
   * If a sketchy app demands "Location Access," PyramidOS feeds it fake coordinates rather than breaking the app or annoying the user with prompts.
 
@@ -68,8 +70,9 @@ This document outlines the creative, modern features that will differentiate Pyr
 *Smart features without the spyware.*
 
 * **Fuzzy Command Line:**
-  * The KShell understands intent.
-  * User types: `clera sren` -> System: "Did you mean `clear screen`?" (Executes automatically).
+  * The shell can suggest intent, but dangerous commands require confirmation.
+  * User types: `clera sren` -> System: "Did you mean `clear screen`?"
+  * AI/intent features must never bypass permissions, capabilities, or safety prompts.
 * **Universal Index:**
   * Press one key to search *everything* (File contents, Settings, PyDB keys, Help docs) instantly. The index is updated in real-time via kernel hooks, not a slow background crawler.
 

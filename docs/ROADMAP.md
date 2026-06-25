@@ -43,6 +43,18 @@ The main engineering rule is:
 
 > **Do not add impressive features before boring correctness gates pass.**
 
+The long-term research stance is:
+
+> **PyramidOS is not anti-Unix. It is post-Unix aware.**
+
+That means Unix-like scaffolding is acceptable during bring-up, but POSIX,
+byte-stream-only IPC, hierarchical paths, ambient global authority, and
+shell-as-system-interface should not become destiny by accident.
+
+AI is allowed as a force multiplier for research, documentation, prototype
+generation, test harnesses, and review. AI-generated low-level code must be
+treated as untrusted until it is manually reviewed and tested.
+
 ---
 
 ## 1. Roadmap Layers
@@ -57,6 +69,7 @@ The main engineering rule is:
 | Zenith concepts | `docs/ROADMAP_L5_ZENITH.md` | Very long-term innovation ideas | Reference only |
 | Arabic-first roadmap | `docs/ROADMAP_ARABIC_FIRST.md` | Arabic/RTL/UTF-8/text/UX track | Active, staged |
 | Baa/Takween plan | `docs/BAA_TAKWEEN_OS_INTEGRATION_PLAN.md` | Future compiler/build-system integration | Deferred until gates pass |
+| Research track | `docs/ROADMAP_RESEARCH.md` | Post-Unix, AI-assisted, capability/object/persistence experiments | Research only |
 
 **Rule:** Detailed implementation tasks belong in Layer 3. High-level ambition
 belongs in Layers 1, 4, and 5. Cross-cutting policies and gates belong here.
@@ -102,6 +115,8 @@ These risks block new feature expansion until resolved.
 | Version strings are inconsistent | P2 | v0.9 | Define one `PYRAMIDOS_VERSION`. |
 | Release archives include `.git/` and `.vs/` | P2 | v0.9 | Add clean export/archive target and stop shipping editor/private data. |
 | Vision docs can outrun engineering reality | Ongoing | Every release | Every release must have gates and explicit deferrals. |
+| Post-Unix ideas can derail v0.9 | Ongoing | v0.9 | Research may be documented, but implementation waits until foundation gates pass. |
+| AI-generated kernel code can look correct while being unsafe | Ongoing | Every release | Treat AI output as untrusted; require manual review, tests, and documented invariants. |
 
 ---
 
@@ -165,7 +180,51 @@ missing PyFS media clearly.
 
 ---
 
-## 5. v0.9 — Storage + VFS Reality Check
+## 5. Research Track — Beyond the Unix-Shaped Rut
+
+**Status:** active thinking, not active implementation.
+
+This track gives the project a place to explore radical design ideas without
+polluting the current sprint. The detailed research backlog lives in
+[`ROADMAP_RESEARCH.md`](ROADMAP_RESEARCH.md).
+
+### Research commitments
+
+- PyramidOS may use Unix-like mechanisms as temporary scaffolding.
+- PyramidOS should avoid becoming POSIX-compatible by accident.
+- PXF should stay Pyramid-native and record/manifest oriented, not “ELF with a
+  different magic number.”
+- Long-term storage should explore structured objects and metadata-rich views,
+  not only byte streams in folders.
+- Authority should eventually move toward explicit handles/capabilities instead
+  of ambient global permissions.
+- AI may help compare designs and generate prototypes, but it does not validate
+  correctness.
+
+### Research gates
+
+A research idea may move from Layer 4/5 into Layer 2/3 only when it has:
+
+| Gate | Requirement |
+|---|---|
+| Design note | Clear model, scope, and non-goals. |
+| Failure model | What can corrupt memory, storage, authority, or UX? |
+| Test strategy | Emulator/unit/simulator path before kernel merge. |
+| Roadmap fit | Does not block lower-level gates. |
+| Rollback path | Can be removed without destabilizing the kernel. |
+
+### First post-v0.9 research deliverable
+
+After v0.9 exits, create:
+
+```text
+R0 — System Model Notebook
+```
+
+It should define PyramidOS terms for program, object, authority, storage,
+message, identity, and UI surface before implementation starts.
+
+## 6. v0.9 — Storage + VFS Reality Check
 
 **Theme:** make the current kernel honest, testable, and safe enough for the next
 real layer.
@@ -194,7 +253,7 @@ small file through VFS, run diagnostics, and ship as a clean source archive.
 
 ---
 
-## 6. v0.10 — Kernel Structure and Userland Preparation
+## 7. v0.10 — Kernel Structure and Userland Preparation
 
 **Theme:** prepare for real processes without rushing into a desktop.
 
@@ -213,7 +272,7 @@ logging, or process abstractions again.
 
 ---
 
-## 7. v0.11 — Minimal Ring 3 Experiment
+## 8. v0.11 — Minimal Ring 3 Experiment
 
 **Theme:** prove the kernel can run one user process safely.
 
@@ -230,7 +289,7 @@ write directly to kernel memory.
 
 ---
 
-## 8. v0.12 — Arabic Console Foundation
+## 9. v0.12 — Arabic Console Foundation
 
 **Theme:** begin the Arabic-first kernel UX properly, after storage and basic
 process direction are stable.
@@ -248,7 +307,7 @@ corrupting UTF-8 or relying permanently on VGA text mode.
 
 ---
 
-## 9. Explicit Deferrals
+## 10. Explicit Deferrals
 
 The following are exciting, but not scheduled until the lower gates pass:
 
@@ -259,6 +318,9 @@ The following are exciting, but not scheduled until the lower gates pass:
 - Full PyFS write support and journaling.
 - Baa/Takween mixed-kernel migration beyond tiny experiments.
 - Local AI / fuzzy command execution.
+- Capability-based security model implementation.
+- Persistent object store replacing the normal filesystem.
+- Structured IPC/component runtime beyond design notes.
 - Mesh networking, hibernation snapshots, vector UI, disposable runtimes.
 
 These belong in Layer 4/5 until the kernel has storage, VFS, basic userland,
@@ -266,7 +328,7 @@ and test discipline.
 
 ---
 
-## 10. Decision Log
+## 11. Decision Log
 
 | Date | Decision | Reason |
 |---|---|---|
@@ -275,10 +337,12 @@ and test discipline.
 | 2026-06-03 | Make v0.9 a stabilization/storage milestone | Current risks are boot/memory/storage correctness, not missing GUI. |
 | 2026-06-03 | Defer Baa/Takween integration until after v0.9 gates | Build/kernel assumptions must be stable before migration. |
 | 2026-06-03 | Keep Arabic-first as core identity, but stage the hard text engine later | Arabic is the differentiator, but shaping/bidi needs framebuffer/UTF-8 groundwork. |
+| 2026-06-25 | Add a post-Unix research track | PyramidOS should not become a toy Linux; radical ideas belong in a controlled research lane. |
+| 2026-06-25 | Allow AI-assisted OSDev with strict review | AI helps explore design space, but generated kernel code is untrusted until reviewed and tested. |
 
 ---
 
-## 11. Maintainer Rules
+## 12. Maintainer Rules
 
 When changing kernel architecture, update this roadmap in the same commit.
 

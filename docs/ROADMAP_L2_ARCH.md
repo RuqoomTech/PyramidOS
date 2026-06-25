@@ -2,6 +2,21 @@
 
 This document details the internal design of the kernel subsystems. It bridges the gap between the Strategic Roadmap (Layer 1) and the actual Code (Layer 3).
 
+## 0. Architectural Principles
+
+1. **Scaffolding is allowed, accidental destiny is not.** Unix-like VFS/devices
+   are acceptable for bring-up, but the architecture should leave room for
+   capability-based authority, structured IPC, object persistence, and a
+   Pyramid-native application model.
+2. **Correctness beats novelty in kernel space.** Research ideas must first be
+   expressed as design notes, simulators, or user-space prototypes.
+3. **AI output is untrusted.** AI may help draft designs, tests, and prototypes,
+   but low-level code is not accepted without manual review, emulator testing,
+   and documented invariants.
+4. **Arabic-first is architectural.** Encoding, input, storage names, diagnostics,
+   and UI layout must not be bolted on as a late translation layer.
+
+
 ---
 
 ## 1. 🧠 Memory Management Architecture
@@ -78,7 +93,23 @@ This document details the internal design of the kernel subsystems. It bridges t
 
 ---
 
-## 4. 🔄 Process Management & Executable Format
+## 4. 🔄 Process Management, Authority & Executable Format
+
+### 4.0 Authority Model Direction
+
+The current kernel does not yet implement user processes, but future process
+design should avoid ambient global authority where possible.
+
+**Direction:**
+
+- process access to files/devices/services should flow through explicit handles;
+- handles should eventually behave like capabilities, not just integers;
+- PXF manifests should declare requested authority;
+- the kernel should be able to deny, fake, or restrict authority per process;
+- early v0.10/v0.11 syscall work should avoid designing itself into a POSIX-only
+  permission model.
+
+This is not a v0.9 implementation task.
 
 ### 4.1 Pyramid Executable Format (PXF)
 
@@ -136,6 +167,21 @@ This document details the internal design of the kernel subsystems. It bridges t
 
 ---
 
+## 4.4 Structured IPC / Component Model Direction
+
+Long-term PyramidOS should not require every component to serialize structured
+state into text streams and parse it again.
+
+Research direction:
+
+- typed message envelopes;
+- manifest-declared interfaces;
+- capability-gated communication;
+- optional shared-memory buffers for large data;
+- Arabic-first diagnostic representation for message schemas and errors.
+
+This belongs in the research track until Ring 3 and basic syscalls exist.
+
 ## 5. 💾 Filesystem Architecture
 
 ### 5.1 Virtual File System (VFS)
@@ -167,6 +213,21 @@ This document details the internal design of the kernel subsystems. It bridges t
   * **Block Bitmap:** Allocation tracking.
   * **Data Blocks:** Raw content.
 * *(Note: FAT32 support will be maintained for boot interoperability).*
+
+### 5.3 Persistent Object Store Direction (Research)
+
+PyFS is the near-term storage foundation, but the long-term system should also
+explore structured objects as first-class persistent entities.
+
+Research questions:
+
+- What is an object identity?
+- How are object references stored and revoked?
+- How does PyDB relate to PyFS and object persistence?
+- Can “smart views” be built on metadata without breaking basic file export?
+- What is the recovery model after a crash?
+
+This must not replace the v0.9 PyFS read-only work. It is a later design lane.
 
 ---
 
