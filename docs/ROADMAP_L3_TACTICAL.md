@@ -23,6 +23,10 @@ scrolling, shell maintainability, PyFS real reads, and VFS-backed commands.
 Research work is allowed only as documentation updates under `ROADMAP_RESEARCH.md`
 or Layer 4/5 notes. It must not consume v0.9 implementation scope.
 
+The deferred ecosystem plan now includes Nazm and an explicit post-v0.9
+i386-versus-x86-64 decision. This clarification does not authorize compiler,
+assembler, Takween, or mixed-kernel implementation during the current sprint.
+
 ---
 
 ## 1. P0 — Boot and Image Layout Hardening

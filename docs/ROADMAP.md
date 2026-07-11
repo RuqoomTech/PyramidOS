@@ -115,6 +115,7 @@ These risks block new feature expansion until resolved.
 | Version strings are inconsistent | P2 | v0.9 | Define one `PYRAMIDOS_VERSION`. |
 | Release archives include `.git/` and `.vs/` | P2 | v0.9 | Add clean export/archive target and stop shipping editor/private data. |
 | Vision docs can outrun engineering reality | Ongoing | Every release | Every release must have gates and explicit deferrals. |
+| Ecosystem target split: PyramidOS i386 vs Baa/Nazm x86-64 | Deferred architecture gate | post-v0.9 | Choose coherent i386 support across both tools or a staged PyramidOS x86-64 migration before mixed-build expansion. |
 | Post-Unix ideas can derail v0.9 | Ongoing | v0.9 | Research may be documented, but implementation waits until foundation gates pass. |
 | AI-generated kernel code can look correct while being unsafe | Ongoing | Every release | Treat AI output as untrusted; require manual review, tests, and documented invariants. |
 
@@ -339,6 +340,7 @@ and test discipline.
 | 2026-06-03 | Keep Arabic-first as core identity, but stage the hard text engine later | Arabic is the differentiator, but shaping/bidi needs framebuffer/UTF-8 groundwork. |
 | 2026-06-25 | Add a post-Unix research track | PyramidOS should not become a toy Linux; radical ideas belong in a controlled research lane. |
 | 2026-06-25 | Allow AI-assisted OSDev with strict review | AI helps explore design space, but generated kernel code is untrusted until reviewed and tested. |
+| 2026-07-11 | Make Nazm and architecture convergence part of the deferred Baa/Takween gate | A Baa-only i386 prototype must not become an unowned permanent split from the x86-64 assembler path. |
 
 ---
 
