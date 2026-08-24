@@ -13,8 +13,13 @@ boot/memory/storage gates.
 - PyramidOS is currently **32-bit i386 freestanding** (`i686-elf-*`, custom linker, raw disk image).
 - Baa currently focuses on **x86_64 Windows/Linux user-space targets**.
 - Nazm 0.4 currently owns an **x86-64** Arabic assembly and ELF64/COFF path; it
-  does not provide i386/ELF32 objects.
-- Takween MVP is **Windows-first** and uses `cmd /c` + `.exe` assumptions.
+  is Baa's admitted hosted production assembler but does not provide i386/ELF32
+  objects.
+- Takween now has cross-platform structured process execution, typed manifests,
+  locks, and target discovery for hosted Baa projects. It does not yet own a
+  freestanding OS profile, raw-image pipeline, or PyramidOS toolchain contract.
+- ArbSh and Qalam are hosted developer-experience tools; neither is part of the
+  kernel image or a prerequisite for building it.
 
 ## Design Rules
 
@@ -42,17 +47,19 @@ boot/memory/storage gates.
 7. Add regression suite for freestanding/kernel cases (no libc calls, no forbidden runtime refs).
 
 ## Required Work in Takween
-1. Add Linux/WSL-first support in addition to Windows.
-2. Remove hardcoded Windows command patterns (`cmd /c`, forced `.exe`).
-3. Add OS profile type in config (example: `النوع: نواة`).
-4. Add pipeline stages:
+1. Extend the existing structured argv/cwd/environment process layer from
+   hosted Baa projects to explicit freestanding toolchains.
+2. Add OS profile type in config (example: `النوع: نواة`).
+3. Add pipeline stages:
    - assemble bootloader
    - compile kernel objects
    - link with linker script
    - build raw image
    - run in QEMU
-5. Add toolchain detection (`i686-elf-gcc`, `i686-elf-ld`, `nasm`, `qemu-system-i386`).
-6. Add deterministic build graph + dependency tracking.
+4. Add structured capability discovery for `i686-elf-gcc`, `i686-elf-ld`,
+   `nasm`, and `qemu-system-i386`; do not compose shell command strings.
+5. Extend deterministic build graphs and lock evidence to custom linker scripts,
+   boot objects, raw images, and the selected emulator/toolchain identities.
 
 ## Required Architecture Decision in Nazm
 
@@ -93,8 +100,8 @@ with an x86-64-only Nazm roadmap.
    Determinism, cross-host reproducibility, panic/diagnostic parity checks.
 
 ## Definition of Done (First Real Success)
-- `takween build-os` (or equivalent) produces `build/pyramidos.img`.
-- `takween run-os` boots to KShell in QEMU.
+- An Arabic Takween kernel-profile build produces `build/pyramidos.img`.
+- The corresponding run command boots to KShell in QEMU.
 - At least one non-trivial kernel module is built from Baa and passes `diagnose`.
 - No CRT/libc dependency appears in final kernel link.
 - The assembler/object path is named explicitly: external i386 bridge or

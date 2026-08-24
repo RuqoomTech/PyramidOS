@@ -341,6 +341,7 @@ and test discipline.
 | 2026-06-25 | Add a post-Unix research track | PyramidOS should not become a toy Linux; radical ideas belong in a controlled research lane. |
 | 2026-06-25 | Allow AI-assisted OSDev with strict review | AI helps explore design space, but generated kernel code is untrusted until reviewed and tested. |
 | 2026-07-11 | Make Nazm and architecture convergence part of the deferred Baa/Takween gate | A Baa-only i386 prototype must not become an unowned permanent split from the x86-64 assembler path. |
+| 2026-08-24 | Register PyramidOS as an official deferred Eco consumer and refresh hosted-tool status | Ecosystem membership adds contract visibility, not permission to bypass v0.9 or import ArbSh/.NET into the kernel. |
 
 ---
 

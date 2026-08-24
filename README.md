@@ -7,6 +7,12 @@
 
 PyramidOS is an experimental Arabic-first monolithic kernel written from scratch in C and Assembly. It features a custom multi-stage BIOS bootloader, protected-mode kernel bring-up, memory-management foundations, hardware drivers, a kernel shell, and early storage/VFS work.
 
+PyramidOS is an official Eco ecosystem member as a deferred freestanding
+consumer. Membership does not authorize Baa/Takween migration during the v0.9
+stabilization sprint and does not make the kernel depend on ArbSh, .NET, Qt, or
+Avalonia. The first admitted integration remains one mixed C/Baa module behind
+the documented target and boot gates.
+
 The project should currently be understood as a serious systems-programming and OS-research project, **not** as a production-ready Windows/Linux replacement.
 
 ---
