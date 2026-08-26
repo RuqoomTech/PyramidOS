@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/branding/pyramidos-master-v1.png" width="144" alt="PyramidOS logo">
+</p>
+
 # PyramidOS
 
 > **Kernel Version:** v0.8.1 (Hardened docs pass)
